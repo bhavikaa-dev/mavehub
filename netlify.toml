@@ -1,4 +1,0 @@
-[build]
-  base = "mavehub"
-  command = "npm run build"
-  publish = "dist"
