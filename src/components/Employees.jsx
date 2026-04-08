@@ -74,7 +74,7 @@ return (
             <td>{emp.team}</td>
             <td>{emp.manager || '-'}</td>
             <td>{emp.joining_date}</td>
-            <td>₹{fmt(emp.salary)}</td>
+            <td>₹{fmt(emp.salary || 0)}</td>
             <td>
               <span
                 style={{ cursor: 'pointer', marginRight: '10px' }}
