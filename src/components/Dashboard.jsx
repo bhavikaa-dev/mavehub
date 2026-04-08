@@ -7,7 +7,7 @@ import { getAdmissions } from '../services/admissionService'
 import {getTargets } from '../services/targetService'
 
 const CHART_DEFAULTS = {
-  color: '#94a3c4',
+  color: '#374151',
   gridColor: '#272d45',
   tickColor: '#556085',
   font: 'DM Mono',

@@ -3,32 +3,34 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg-main: #0d0f1a;
-  --bg-card: #111827;
-  --surface: #141720;
-  --surface2: #1a1e2e;
-  --surface3: #212640;
-  --border: #272d45;
-  --border2: #323a58;
-  --accent: #8b5cf6;
-  --accent2: #a78bfa;
-  --accent3: #c084fc;
-  --accent4: #ec4899;
-  --accent5: #a855f7;
-  --accent6: #7c3aed;
-  --text: #f3f0ff;
-  --text2: #b4a7d6;
-  --text3: #7c6aa8;
+  :root {
+  --bg-main: #f9fafb;        /* main background */
+  --bg-card: #ffffff;        /* cards */
+  --surface: #ffffff;
+  --surface2: #f3f4f6;
+  --surface3: #e5e7eb;
+
+  --border: #e5e7eb;
+  --border2: #d1d5db;
+
+  --accent: #6366f1;         /* keep your brand color */
+  --accent2: #8b5cf6;
+  --accent3: #06b6d4;
+  --accent4: #10b981;
+  --accent5: #f59e0b;
+  --accent6: #ef4444;
+
+  --text: #111827;           /* main text */
+  --text2: #4b5563;
+  --text3: #9ca3af;
+
   --sidebar-w: 220px;
   --header-h: 56px;
   --radius: 12px;
   --radius2: 8px;
-  --glow-blue: 0 0 20px rgba(139,92,246,0.18);
-  --glow-purple: 0 0 20px rgba(167,139,250,0.18);
-  --glow-green: 0 0 20px rgba(192,132,252,0.18);
-  --shadow: 0 2px 8px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+
+  --glow-blue: none;
+  --glow-purple: none;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,7 +38,7 @@
 html, body {
   height: 100%;
   font-family: 'Syne', sans-serif;
-  background: var(--bg);
+  background: var(--bg-main);
   color: var(--text);
   overflow: hidden;
 }
@@ -564,6 +566,10 @@ html, body {
 .app {
   display: flex;
   height: 100vh;
+Background-color: #f9fafb !
+important; 
+color: #111827 !
+important;
 }
 
 /* SIDEBAR */
@@ -761,4 +767,278 @@ tr {
 .org-card .team {
   font-size: 11px;
   opacity: 0.5;
+}
+/* GLOBAL LIGHT THEME FIX */
+
+/* App background */
+.app,
+.main,
+.content {
+  background: #f9fafb !important;
+  color: #111827 !important;
+}
+
+/* All cards / boxes */
+.card,
+.chart-box,
+.table-container,
+.box,
+.section {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px;
+}
+
+/* Tables (EMPLOYEES PAGE FIX 🔥) */
+table {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+thead {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+tbody tr {
+  background: #ffffff !important;
+}
+
+tbody tr:hover {
+  background: #f9fafb !important;
+}
+
+/* Fix random dark divs */
+div {
+  background-color: inherit;
+}
+/* ===== SIDEBAR FIX ===== */
+.sidebar {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* Sidebar text */
+.nav-item {
+  color: #374151 !important;
+}
+
+/* Active item */
+.nav-item.active {
+  background: #e0e7ff !important;
+  color: #1d4ed8 !important;
+}
+
+/* Sidebar section labels */
+.sidebar-section-label {
+  color: #9ca3af !important;
+}
+
+/* ===== HIERARCHY BOX FIX ===== */
+.node {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* ===== TABLE HEADER FIX ===== */
+thead {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+/* ===== REMOVE DARK BACKGROUND FROM RANDOM BOXES ===== */
+.card,
+.chart-box,
+.table-container {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* ===== DASHBOARD FINAL FIX ===== */
+
+/* All dashboard cards */
+.card,
+.chart-box {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px;
+}
+
+/* Remove inner dark layers */
+.card * ,
+.chart-box * {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Fix chart canvas (IMPORTANT 🔥) */
+canvas {
+  background: transparent !important;
+}
+
+/* Chart container fix */
+.chart-box {
+  padding: 16px;
+}
+
+/* Fix headings */
+.chart-box h3 {
+  color: #111827 !important;
+}
+
+/* PAGE TITLES (Employees, Hierarchy etc) */
+h1, h2 {
+  font-weight: 700 !important;
+  font-size: 22px;
+  color: #111827 !important;
+  margin-bottom: 10px;
+} 
+/* small subtitles like "9 members" */
+p, .sub-text {
+  color: #6b7280 !important;
+  font-weight: 500;
+}
+/* HIERARCHY NODES */
+.node {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+/* TOP HEADER STRIP */
+.header,
+.topbar {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* FIX HIERARCHY TITLE */
+.section-title {
+  color: #111827 !important;   /* DARK BLACK */
+  font-weight: 700 !important;
+  font-size: 20px;
+}
+
+/* OPTIONAL (sub text) */
+.section-meta {
+  color: #6b7280 !important;
+}
+
+/* HIERARCHY CARDS FINAL */
+
+.org-card {
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  border-radius: 12px;
+}
+
+/* NAME */
+.org-card .name {
+  color: #1d4ed8 !important; /* ROYAL BLUE */
+  font-weight: 700;
+}
+
+/* ROLE */
+.org-card .role {
+  color: #111827 !important;
+}
+
+/* TEAM */
+.org-card .team {
+  color: #374151 !important;
+}
+
+/* ===== FILTER BAR FIX (GLOBAL) ===== */
+
+.gf-wrap {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* DATE INPUTS */
+.gf-wrap input {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+/* FILTER BUTTON */
+.btn-filter {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+/* CLEAR BUTTON */
+.btn-filter.clean {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+/* SAFE TABLE HEADER FIX */
+
+table thead {
+  background: #f3f4f6;
+}
+
+table thead th {
+  color: #111827;
+  font-weight: 600;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}/* SAFE TABLE HEADER FIX */
+
+table thead {
+  background: #f3f4f6;
+}
+
+table thead th {
+  color: #111827;
+  font-weight: 600;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* FORCE FIX TABLE HEADER (FINAL) */
+
+table thead,
+thead {
+  background: #f3f4f6 !important;
+}
+
+table thead th,
+thead th {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* FIX TABLE TEXT VISIBILITY */
+
+table tbody td {
+  color: #111827 !important;   /* dark text */
+  font-weight: 500;
+}
+
+/* Slightly lighter for secondary text (optional) */
+table tbody td span {
+  color: #374151 !important;
 }

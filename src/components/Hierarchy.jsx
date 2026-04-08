@@ -23,7 +23,14 @@ function buildTree(employees) {
 function Node({ node }) {
   return (
     <li>
-      <div className="org-card">
+      <div className="org-card"
+      style={{
+        background: '#ffffff',
+        color: '#111827',
+        border: '1px solid #e5e7eb',
+        borderRadius: '10px'
+}}
+>
         <div className="name">{node.name}</div>
         <div className="role">{node.role}</div>
         <div className="team">{node.team}</div>
