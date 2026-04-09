@@ -1,32 +1,34 @@
 import { supabase } from './supabase'
-
-// ✅ GET (FROM GOOGLE SHEET via SheetDB)
 export const getAdmissions = async () => {
-  try {
-    const res = await fetch('https://sheetdb.io/api/v1/lead8d6irhoxv')
-    const data = await res.json()
-
-    return data.map((row, index) => ({
-      id: index + 1, 
-      employee: row.Employee,
-      date: row.Date,
-      university: row.University,
-      points: Number(row.Points),
-      revenue: Number(row.Revenue),
-      payment: row.Payment,
-      team: row.Team
-    }))
-  } catch (error) {
-    console.error('SHEET GET ERROR:', error)
-    return []
-  }
-}
-
-// ADD (UNCHANGED - SUPABASE)
-export const addAdmission = async (payload) => {
   const { data, error } = await supabase
     .from('admissions')
-    .insert([payload])
+    .select('*')
+    .order('date', { ascending: false })
+
+  if (error) {
+    console.error('GET ERROR:', error)
+    return []
+  }
+
+  return data
+}
+
+export const addAdmission = async (payload) => {
+  const formattedDate = payload.date
+    ? (() => {
+        const [month, day, year] = payload.date.split('-')
+        return `${year}-${month}-${day}`
+      })()
+    : null
+
+  const { data, error } = await supabase
+    .from('admissions')
+    .insert([
+      {
+        ...payload,
+        date: formattedDate
+      }
+    ])
     .select()
 
   if (error) {
@@ -37,11 +39,20 @@ export const addAdmission = async (payload) => {
   return data
 }
 
-// UPDATE (UNCHANGED)
 export const updateAdmission = async (id, payload) => {
+  const formattedDate = payload.date
+    ? (() => {
+        const [month, day, year] = payload.date.split('-')
+        return `${year}-${month}-${day}`
+      })()
+    : null
+
   const { data, error } = await supabase
     .from('admissions')
-    .update(payload)
+    .update({
+      ...payload,
+      date: formattedDate
+    })
     .eq('id', id)
     .select()
 
@@ -52,8 +63,7 @@ export const updateAdmission = async (id, payload) => {
 
   return data
 }
-
-// DELETE (UNCHANGED)
+// ✅ DELETE
 export const deleteAdmission = async (id) => {
   const { error } = await supabase
     .from('admissions')
@@ -62,5 +72,8 @@ export const deleteAdmission = async (id) => {
 
   if (error) {
     console.error('DELETE ERROR:', error)
+    throw error
   }
+
+  return true
 }

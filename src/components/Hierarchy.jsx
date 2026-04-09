@@ -69,7 +69,8 @@ export default function Hierarchy() {
         </div>
       </div>
 
-      <div className="org-tree">
+      <div className="org-tree"
+      style={{ overflowX: 'auto', padding: '20px' }}>
         <ul>
           {tree.map(root => (
             <Node key={root.id} node={root} />

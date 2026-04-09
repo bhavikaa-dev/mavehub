@@ -1042,3 +1042,13 @@ table tbody td {
 table tbody td span {
   color: #374151 !important;
 }
+
+
+.org-tree {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.org-tree ul {
+  min-width: max-content;
+}

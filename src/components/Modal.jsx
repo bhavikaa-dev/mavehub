@@ -1,4 +1,4 @@
-export default function Modal({ id, title, children, onClose }) {
+   export default function Modal({ id, title, children, onClose }) {
   return (
     <div className="modal-overlay open" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal">

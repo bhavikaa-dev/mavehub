@@ -64,7 +64,9 @@ export default function Admissions() {
 
               return (
                 <tr key={a.id}>
-                  <td>{a.employee}</td>
+                  <td>
+                    {employees.find(e => e.id ===a.employee_id)?.name || '-'}
+                  </td>
                   <td>{a.date}</td>
                   <td>{a.university}</td>
                   <td>{a.points}</td>
@@ -142,13 +144,13 @@ function AdmissionModal({ editing, onClose, refresh, employees }) {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   const handleSave = async () => {
-    if (!form.employee_id) {
+    if (!form.employee_name) {
       toast('Select employee', true)
       return
     }
 
     const payload = {
-      employee_id: Number(form.employee_id),
+      employee_name: form.employee_namr,
       date: form.date,
       university: form.university,
       revenue: Number(form.revenue) || 0,

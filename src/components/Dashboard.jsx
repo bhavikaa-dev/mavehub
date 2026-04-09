@@ -92,7 +92,12 @@ const currentMonth = new Date().getMonth()
 const currentYear = new Date().getFullYear()
 
 const admissionsThisMonth = admissions.filter(a => {
-  const parts = a.date.split('/')
+  if (!a.date) return false
+
+const parts = a.date.includes('-')
+  ? a.date.split('-')
+  : a.date.split('/')
+
 const d = new Date(parts[2], parts[1] - 1, parts[0])
   const now = new Date()
   return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
