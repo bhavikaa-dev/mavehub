@@ -47,6 +47,12 @@ export default function Dashboard() {
   const admissionsChart = useRef(null)
   const targetChart = useRef(null)
 
+const getTeamName = (team) => {
+  if (!team) return 'Unknown'
+  if (team === 'Alpha') return 'Team Praveen'
+  return team
+}
+
   // ✅ LOAD DATA
   useEffect(() => {
     const load = async () => {
@@ -71,7 +77,7 @@ const admissionsByTeam = employees.map(e => {
   )
 
   return {
-    team: e.team,
+    team: getTeamName (e.team),
     admissions: empAdm.length
   }
 })
@@ -130,12 +136,12 @@ const d = new Date(parts[2], parts[1] - 1, parts[0])
  }, 
   ]
 
-  const teams = ['Team Praveen', 'Team Anuj', 'Team Sapna']
-  const teamColors = ['#4d9fff', '#a78bfa', '#10e8a8']
+  const teams = ['Team Praveen', 'Team Anuj', 'Team Sapna', 'Team CRM']
+  const teamColors = ['#4d9fff', '#a78bfa', '#10e8a8', '#34D399']
 
   // ✅ TEAM REVENUE
   const teamRevenue = teams.map(t => {
-    const ids = employees.filter(e => e.team === t).map(e => e.id)
+    const ids = employees.filter(e => getTeamName (e.team) === t).map(e => e.id)
 
     return admissions
       .filter(a => ids.includes(a.employee_id))
@@ -153,7 +159,7 @@ const d = new Date(parts[2], parts[1] - 1, parts[0])
 
   // ✅ TEMP TARGET
   const teamTarget = teams.map(t => {
-  const ids = employees.filter(e => e.team === t).map(e => e.id)
+  const ids = employees.filter(e => getTeamName (e.team) === t).map(e => e.id)
 
   return targets
     .filter(tg => ids.includes(tg.employee_id))

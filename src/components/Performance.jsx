@@ -32,7 +32,7 @@ export default function Performance() {
   const data = (employees || []).map(e => {
     const empAdm = (admissions || []).filter(
       a =>
-        (a.employee || '').trim().toLowerCase() ===
+        (a.employee_name || '').trim().toLowerCase() ===
         (e.name || '').trim().toLowerCase()
     )
 
@@ -56,7 +56,7 @@ export default function Performance() {
 
     const percentage =
       target > 0
-        ? ((totalAdmissions / target) * 100).toFixed(1)
+        ? Math.round((totalAdmissions / target) * 100)
         : 0
 
     return {
@@ -102,7 +102,37 @@ export default function Performance() {
                 <td>₹{fmt ? fmt(e.revenue) : e.revenue}</td>
                 <td>{e.points}</td>
                 <td>{e.target}</td>
-                <td>{e.percentage}%</td>
+                <td>
+  {(() => {
+    const percent = Number(e.percentage || 0)
+
+    let color = '#ef4444' // red
+
+    if (percent > 75) color = '#22c55e'      // green
+    else if (percent > 50) color = '#eab308' // yellow
+    else if (percent > 35) color = '#f97316' // orange
+
+    return (
+      <div style={{
+        width: '120px',
+        background: '#1f2937',
+        borderRadius: '6px',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          width: `${percent}%`,
+          background: color,
+          padding: '4px 0',
+          textAlign: 'center',
+          fontSize: '12px',
+          color: 'white'
+        }}>
+          {percent}%
+        </div>
+      </div>
+    )
+  })()}
+</td>
               </tr>
             ))}
           </tbody>

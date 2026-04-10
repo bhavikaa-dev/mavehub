@@ -21,22 +21,32 @@ export default function Leaderboard() {
     load()
   }, [])
 
-  const leaderboard = employees.map(e => {
-  const empAdm = admissions.filter(
-    a => (a.employee || '').trim().toLowerCase() === (e.name || '').trim().toLowerCase()
-  )
+  const leaderboard = (employees || []).map(e => {
 
-  const revenue = empAdm.reduce((s, a) => s + (a.revenue || 0), 0)
-  const points = empAdm.reduce((s, a) => s + (a.points || 0), 0)
+    const empAdm = (admissions || []).filter(
+      a =>
+        (a?.employee_name || '').trim().toLowerCase() ===
+        (e?.name || '').trim().toLowerCase()
+    )
 
-  return {
-    ...e,
-    revenue,
-    points,
-    admissions: empAdm.length
-  }
-})
-.sort((a, b) => b.admissions - a.admissions)
+    const revenue = empAdm.reduce(
+      (s, a) => s + Number(a?.revenue || 0),
+      0
+    )
+
+    const points = empAdm.reduce(
+      (s, a) => s + Number(a?.points || 0),
+      0
+    )
+
+    return {
+      ...e,
+      revenue,
+      points,
+      admissions: empAdm.length
+    }
+  })
+  .sort((a, b) => b.admissions - a.admissions)
 
   return (
     <div className="fade-in">

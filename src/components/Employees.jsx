@@ -9,7 +9,7 @@ updateEmployee,
 deleteEmployee
 } from '../services/employeeService'
 
-const TEAMS = ['Team Praveen', 'Team Anuj', 'Team Sapna']
+const TEAMS = ['Team Praveen', 'Team Anuj', 'Team Sapna', 'Team CRM', 'Team Gurpreet']
 
 export default function Employees() {
 const [employees, setEmployees] = useState([])
@@ -117,7 +117,7 @@ function EmpModal({ emp, onClose, refresh, employees }) {
 const [form, setForm] = useState({
 name: '',
 role: '',
-team: 'Alpha',
+team: 'Team Praveen',
 manager_id: '',
 manager: '',
 joining_date: today(),
@@ -130,7 +130,7 @@ if (emp) {
 setForm({
 name: emp.name || '',
 role: emp.role || '',
-team: emp.team || 'Alpha',
+team: emp.team || 'Team Praveen',
 manager_id: emp.manager_id ?? '',
 manager: emp.manager || '',
 joining_date: emp.joining_date || today(),
@@ -140,7 +140,7 @@ salary: emp.salary || ''
 setForm({
 name: '',
 role: '',
-team: 'Alpha',
+team: 'Team Praveen',
 manager_id: '',
 manager: '',
 joining_date: today(),
