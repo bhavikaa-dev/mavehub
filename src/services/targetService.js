@@ -15,10 +15,22 @@ export const getTargets = async () => {
 }
 
 // ADD
-export const addTarget = async (payload) => {
+export const addTarget = async (data) => {
   const { error } = await supabase
     .from('targets')
-    .insert([payload])
+    .upsert([
+      {
+        employee_id: data.employee_id,
+        employee_name: data.employee_name,
+        target: data.target,
+        month: data.month
+      }
+    ])
+
+  if (error) {
+    console.error('TARGET ADD ERROR:', error)
+    throw error
+  }
 
   if (error) {
     console.error('TARGET ADD ERROR:', error)

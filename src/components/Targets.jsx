@@ -9,6 +9,7 @@ export default function Targets() {
   const [targets, setTargets] = useState([])
   const [employees, setEmployees] = useState([])
   const [open, setOpen] = useState(null)
+  const [selectedMonth, setSelectedMonth] = useState('')
 
   const load = async () => {
     const [t, e] = await Promise.all([
@@ -24,6 +25,16 @@ export default function Targets() {
     load()
   }, [])
 
+  // ✅ AUTO LATEST MONTH
+  useEffect(() => {
+    if (targets.length > 0) {
+      const latest = [...targets]
+        .sort((a, b) => b.month.localeCompare(a.month))[0]
+
+      setSelectedMonth(latest.month)
+    }
+  }, [targets])
+
   return (
     <div className="fade-in">
 
@@ -33,7 +44,14 @@ export default function Targets() {
           <div className="section-meta">{targets.length} ASSIGNED</div>
         </div>
 
-        <button className="btn btn-primary" onClick={() => setOpen(true)}>
+        <input
+          type="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          style={{ marginRight: '10px' }}
+        />
+
+        <button className="btn btn-primary" onClick={() => setOpen('new')}>
           + Add Target
         </button>
       </div>
@@ -50,26 +68,47 @@ export default function Targets() {
           </thead>
 
           <tbody>
-  {employees.map(emp => {
-    const target = targets.find(t => t.employee_id === emp.id)
+            {employees.map(emp => {
+              const empTargets = targets.filter(
+                t => Number(t.employee_id) === Number(emp.id)
+              )
 
-    return (
-      <tr key={emp.id}>
-        <td>{emp.name}</td>
-        <td>{target?.target || '-'}</td>
-        <td>{target?.month || '-'}</td>
-        <td>
-          <span
-            style={{ color: 'blue', cursor: 'pointer' }}
-            onClick={() => setOpen(emp.id)}
-          >
-            {target ? 'Edit' : 'Add'}
-          </span>
-        </td>
-      </tr>
-    )
-  })}
-</tbody>
+              const target = selectedMonth
+                ? empTargets.find(t => t.month === selectedMonth)
+                : empTargets.sort((a, b) =>
+                    b.month.localeCompare(a.month)
+                  )[0]
+
+              return (
+                <tr key={emp.id}>
+                  <td>{emp.name}</td>
+                  <td>{target?.target || '-'}</td>
+                  <td>{target?.month || '-'}</td>
+                  <td style={{ display: 'flex', gap: '10px' }}>
+                    <span
+                      style={{ color: 'blue', cursor: 'pointer' }}
+                      onClick={() => setOpen(emp.id)}
+                    >
+                      {target ? 'Edit' : 'Add'}
+                    </span>
+
+                    {target && (
+                      <span
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        onClick={async () => {
+                          await deleteTarget(target.id)
+                          toast('Deleted')
+                          load()
+                        }}
+                      >
+                        Delete
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
         </table>
       </div>
 
@@ -79,6 +118,7 @@ export default function Targets() {
           refresh={load}
           employees={employees}
           selectedEmployee={open}
+          selectedMonth={selectedMonth}
         />
       )}
     </div>
@@ -86,12 +126,22 @@ export default function Targets() {
 }
 
 
-// MODAL
-function TargetModal({ onClose, refresh, employees, selectedEmployee }) {
+// ================= MODAL =================
+
+function TargetModal({
+  onClose,
+  refresh,
+  employees,
+  selectedEmployee,
+  selectedMonth
+}) {
   const [form, setForm] = useState({
-    employee_id: selectedEmployee || '',
+    employee_id:
+      selectedEmployee === 'new'
+        ? employees[0]?.id || ''
+        : selectedEmployee,
     target: '',
-    month: ''
+    month: selectedMonth || ''
   })
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
@@ -102,62 +152,92 @@ function TargetModal({ onClose, refresh, employees, selectedEmployee }) {
       return
     }
 
+    if (!form.target) {
+      toast('Enter target', true)
+      return
+    }
+
+    if (!form.month) {
+      toast('Select month', true)
+      return
+    }
+
     try {
+      const selectedEmp = employees.find(
+        e => Number(e.id) === Number(form.employee_id)
+      )
+
+      if (!selectedEmp) {
+        toast('Employee not found', true)
+        return
+      }
+
       await addTarget({
-        employee_id: Number(form.employee_id),
+        employee_id: selectedEmp.id,
+        employee_name: selectedEmp.name,
         target: Number(form.target),
         month: form.month
       })
 
-      toast('Added')
+      toast('Saved')
       refresh()
       onClose()
 
-    } catch {
-      toast('Error', true)
+    } catch (err) {
+      console.error(err)
+      toast('Error saving target', true)
     }
   }
 
-return (
-  <Modal title="Set Target" onClose={onClose}>
-    <div className="form-grid">
+  return (
+    <Modal title="Set Target" onClose={onClose}>
+      <div className="form-grid">
 
-      <div className="form-group full">
-        <label>Employee</label>
-        <select value={form.employee_id} disabled>
-          {employees.map(emp => (
-            <option key={emp.id} value={emp.id}>
-              {emp.name}
-            </option>
-          ))}
-        </select>
+        <div className="form-group full">
+          <label>Employee</label>
+          <select
+            value={form.employee_id}
+            onChange={(e) =>
+              set('employee_id', Number(e.target.value))
+            }
+          >
+            {employees.map(emp => (
+              <option key={emp.id} value={emp.id}>
+                {emp.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Target</label>
+          <input
+            type="number"
+            value={form.target}
+            onChange={(e) => set('target', e.target.value)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Month</label>
+          <input
+            type="month"
+            value={form.month}
+            onChange={(e) => set('month', e.target.value)}
+          />
+        </div>
+
       </div>
 
-      <div className="form-group">
-        <label>Target</label>
-        <input
-          type="number"
-          value={form.target}
-          onChange={(e) => set('target', e.target.value)}
-        />
+      <div className="form-actions">
+        <button className="btn btn-ghost" onClick={onClose}>
+          Cancel
+        </button>
+        <button className="btn btn-primary" onClick={handleSave}>
+          Save
+        </button>
       </div>
 
-      <div className="form-group">
-        <label>Month</label>
-        <input
-          type="month"
-          value={form.month}
-          onChange={(e) => set('month', e.target.value)}
-        />
-      </div>
-
-    </div>
-
-    <div className="form-actions">
-      <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
-      <button className="btn btn-primary" onClick={handleSave}>Save</button>
-    </div>
-
-  </Modal>
-)
+    </Modal>
+  )
 }
