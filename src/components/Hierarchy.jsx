@@ -22,7 +22,7 @@ function buildTree(employees) {
 
 function Node({ node }) {
   return (
-    <li>
+    <li className="list-none">
       <div className="org-card"
       style={{
         background: '#ffffff',
@@ -35,9 +35,8 @@ function Node({ node }) {
         <div className="role">{node.role}</div>
         <div className="team">{node.team}</div>
       </div>
-
       {node.children.length > 0 && (
-        <ul>
+        <ul className="flex flex-col gap-3 ml-6 border-1 pl-4 mt-2">
           {node.children.map(child => (
             <Node key={child.id} node={child} />
           ))}
@@ -69,9 +68,12 @@ export default function Hierarchy() {
         </div>
       </div>
 
-      <div className="org-tree"
+      <div className="org-tree h-[75vh]
+      overflow-y-auto p-5">
+      </div>
       style={{ overflowX: 'auto', padding: '20px' }}>
-        <ul>
+        <ul class Name="flex flex-col gap-6">
+        </ul>
           {tree.map(root => (
             <Node key={root.id} node={root} />
           ))}
