@@ -60,25 +60,21 @@ export default function Hierarchy() {
   const tree = buildTree(employees)
 
   return (
-    <div className="fade-in">
-      <div className="section-header">
-        <div>
-          <div className="section-title">Hierarchy</div>
-          <div className="section-meta">ORG STRUCTURE</div>
-        </div>
-      </div>
-
-      <div className="org-tree h-[75vh]
-      overflow-y-auto p-5">
-      </div>
-      style={{ overflowX: 'auto', padding: '20px' }}>
-        <ul class Name="flex flex-col gap-6">
-        </ul>
-          {tree.map(root => (
-            <Node key={root.id} node={root} />
-          ))}
-        </ul>
+  <div className="fade-in">
+    <div className="section-header">
+      <div>
+        <div className="section-title">Hierarchy</div>
+        <div className="section-meta">ORG STRUCTURE</div>
       </div>
     </div>
-  )
+
+    <div className="org-tree h-[75vh] overflow-y-auto p-5">
+      <ul className="flex flex-col gap-6">
+        {tree.map((root) => (
+          <Node key={root.id} node={root} />
+        ))}
+      </ul>
+    </div>
+  </div>
+)
 }
