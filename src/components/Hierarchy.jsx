@@ -20,30 +20,23 @@ function buildTree(employees) {
   return roots
 }
 
-function Node({ node }) {
-  return (
-    <li className="list-none">
-      <div className="org-card"
-      style={{
-        background: '#ffffff',
-        color: '#111827',
-        border: '1px solid #e5e7eb',
-        borderRadius: '10px'
-}}
->
-        <div className="name">{node.name}</div>
-        <div className="role">{node.role}</div>
-        <div className="team">{node.team}</div>
-      </div>
-      {node.children.length > 0 && (
-        <ul className="flex flex-col gap-3 ml-6 border-1 pl-4 mt-2">
-          {node.children.map(child => (
-            <Node key={child.id} node={child} />
-          ))}
-        </ul>
-      )}
-    </li>
-  )
+// ✅ NEW: convert tree → levels (for horizontal layout)
+function getLevels(tree) {
+  const levels = []
+
+  function traverse(nodes, level = 0) {
+    if (!levels[level]) levels[level] = []
+
+    nodes.forEach(node => {
+      levels[level].push(node)
+      if (node.children && node.children.length > 0) {
+        traverse(node.children, level + 1)
+      }
+    })
+  }
+
+  traverse(tree)
+  return levels
 }
 
 export default function Hierarchy() {
@@ -58,23 +51,45 @@ export default function Hierarchy() {
   }, [])
 
   const tree = buildTree(employees)
+  const levels = getLevels(tree)
 
   return (
-  <div className="fade-in">
-    <div className="section-header">
-      <div>
-        <div className="section-title">Hierarchy</div>
-        <div className="section-meta">ORG STRUCTURE</div>
+    <div className="fade-in">
+      <div className="section-header">
+        <div>
+          <div className="section-title">Hierarchy</div>
+          <div className="section-meta">ORG STRUCTURE</div>
+        </div>
+      </div>
+
+      <div className="org-tree h-[75vh] overflow-auto p-5">
+
+        {levels.map((level, i) => (
+          <div key={i} className="flex justify-center gap-10 mb-10 flex-wrap">
+
+            {level.map((node) => (
+              <div
+                key={node.id}
+                className="org-card p-3 shadow-sm hover:shadow-md transition"
+                style={{
+                  background: '#ffffff',
+                  color: '#111827',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '10px',
+                  minWidth: '140px',
+                  textAlign: 'center'
+                }}
+              >
+                <div className="name font-semibold">{node.name}</div>
+                <div className="role text-sm text-gray-500">{node.role}</div>
+                <div className="team text-xs text-gray-400">{node.team}</div>
+              </div>
+            ))}
+
+          </div>
+        ))}
+
       </div>
     </div>
-
-    <div className="org-tree h-[75vh] overflow-y-auto p-5">
-      <ul className="flex flex-col gap-6">
-        {tree.map((root) => (
-          <Node key={root.id} node={root} />
-        ))}
-      </ul>
-    </div>
-  </div>
-)
+  )
 }
