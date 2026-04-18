@@ -70,27 +70,28 @@ const getTeamName = (team) => {
   }, [])
 
   // ✅ CALCULATIONS
-// 🔥 ADMISSIONS BY TEAM
-const admissionsByTeam = employees.map(e => {
-  const empAdm = admissions.filter(
-    a => (a.employee || '').trim().toLowerCase() === (e.name || '').trim().toLowerCase()
+// 🔥 TEAM PERFORMANCE (POINTS BASED)
+const teamPerformance = {}
+
+admissions.forEach(a => {
+  const emp = employees.find(
+    e =>
+      String(e.name || '').trim().toLowerCase() ===
+      String(a.employee_name || '').trim().toLowerCase()
   )
 
-  return {
-    team: getTeamName (e.team),
-    admissions: empAdm.length
+  const team = getTeamName(emp?.team)
+
+  if (!teamPerformance[team]) {
+    teamPerformance[team] = 0
   }
+
+  teamPerformance[team] += Number(a.points || 0)
 })
 
-const teamData = Object.values(
-  admissionsByTeam.reduce((acc, curr) => {
-    if (!acc[curr.team]) {
-      acc[curr.team] = { team: curr.team, admissions: 0 }
-    }
-    acc[curr.team].admissions += curr.admissions
-    return acc
-  }, {})
-)
+// chart ready data
+const teamLabels = Object.keys(teamPerformance)
+const teamPoints = Object.values(teamPerformance)
 
 
 // 🔥 ADMISSIONS THIS MONTH
@@ -175,9 +176,10 @@ const d = new Date(parts[2], parts[1] - 1, parts[0])
 revenueChart.current = new Chart(revenueRef.current, {
   type: 'doughnut',
   data: {
-    labels: teamData.map(t => t.team),
+    labels: teamLabels,
     datasets: [{
-      data: teamData.map(t => t.admissions),
+            label: 'Points',
+      data: teamPoints,
       backgroundColor: teamColors,
       borderWidth: 0
     }]

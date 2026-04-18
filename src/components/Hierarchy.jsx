@@ -54,13 +54,7 @@ export default function Hierarchy() {
   const levels = getLevels(tree)
 
   return (
-    <div className="fade-in">
-      <div className="section-header">
-        <div>
-          <div className="section-title">Hierarchy</div>
-          <div className="section-meta">ORG STRUCTURE</div>
-        </div>
-      </div>
+    <div className="fade-in" style={{ overflow: 'auto' }}>
 
       <div className="org-tree h-[75vh] overflow-auto p-5">
 
@@ -90,6 +84,7 @@ export default function Hierarchy() {
         ))}
 
       </div>
+
     </div>
   )
 }

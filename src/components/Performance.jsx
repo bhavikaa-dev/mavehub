@@ -8,7 +8,19 @@ export default function Performance() {
   const [employees, setEmployees] = useState([])
   const [admissions, setAdmissions] = useState([])
   const [targets, setTargets] = useState([])
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
 
+  // 🌍 IST DATE
+  const now = new Date()
+  const istDate = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  )
+
+  const currentMonth = istDate.getMonth()
+  const currentYear = istDate.getFullYear()
+
+  // ✅ LOAD DATA
   useEffect(() => {
     const load = async () => {
       try {
@@ -29,49 +41,86 @@ export default function Performance() {
     load()
   }, [])
 
+  // ✅ SET CURRENT MONTH RANGE
+  useEffect(() => {
+    const current = new Date()
+
+    const ist = new Date(
+      current.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    )
+
+    const firstDay = new Date(ist.getFullYear(), ist.getMonth(), 1)
+    const lastDay = new Date(ist.getFullYear(), ist.getMonth() + 1, 0)
+
+    setFromDate(firstDay.toISOString().split('T')[0])
+    setToDate(lastDay.toISOString().split('T')[0])
+  }, [])
+
+  // ✅ MAIN DATA LOGIC
   const data = (employees || []).map(e => {
-    const empAdm = (admissions || []).filter(
-      a =>
-        (a.employee_name || '').trim().toLowerCase() ===
-        (e.name || '').trim().toLowerCase()
-    )
+    const empId = Number(e.id)
 
-    const empTarget = (targets || []).find(
-      t => Number(t.employee_id) === Number(e.id)
-    )
+    const empAdmissions = (admissions || []).filter(a => {
+      const d = new Date(a.date)
 
-    const totalAdmissions = empAdm.length
+      return (
+        Number(a.employee_id) === empId &&
+        (!fromDate || d >= new Date(fromDate)) &&
+        (!toDate || d <= new Date(toDate))
+      )
+    })
 
-    const revenue = empAdm.reduce(
-      (s, a) => s + Number(a.revenue || 0),
+    const totalAdmissions = empAdmissions.length
+
+    const totalRevenue = empAdmissions.reduce(
+      (sum, a) => sum + Number(a.revenue || 0),
       0
     )
 
-    const points = empAdm.reduce(
-      (s, a) => s + Number(a.points || 0),
+    const totalPoints = empAdmissions.reduce(
+      (sum, a) => sum + Number(a.points || 0),
       0
     )
 
-    const target = Number(empTarget?.target || 0)
+    const salary = Number(e.salary || 0)
 
-    const percentage =
-      target > 0
-        ? Math.round((totalAdmissions / target) * 100)
-        : 0
+    // 👉 TARGET (IMPORTANT)
+    const empTarget = (targets || []).find(t =>
+      Number(t.employee_id) === empId &&
+      new Date(t.month).getMonth() === currentMonth &&
+      new Date(t.month).getFullYear() === currentYear
+    )
+
+    const targetValue = Number(empTarget?.target || 0)
+
+    // 👉 % ACHIEVED
+    const percent = targetValue > 0
+      ? (totalRevenue / targetValue) * 100
+      : 0
+
+    // 👉 PERFORMANCE COLOR
+    let performance = 'red'
+
+    if (salary > 0) {
+      if (totalRevenue >= salary * 20) performance = 'green'
+      else if (totalRevenue >= salary * 15) performance = 'orange'
+      else if (totalRevenue >= salary * 10) performance = 'yellow'
+    }
 
     return {
       ...e,
       admissions: totalAdmissions,
-      revenue,
-      points,
-      target,
-      percentage
+      revenue: totalRevenue,
+      points: totalPoints,
+      salary,
+      performance,
+      target: targetValue,
+      percent
     }
   })
 
   return (
     <div className="fade-in">
-
       <div className="section-header">
         <div>
           <div className="section-title">Performance</div>
@@ -94,51 +143,51 @@ export default function Performance() {
           </thead>
 
           <tbody>
-            {data.map(e => (
-              <tr key={e.id}>
-                <td>{e.name || '-'}</td>
-                <td>{e.team || '-'}</td>
-                <td>{e.admissions}</td>
-                <td>₹{fmt ? fmt(e.revenue) : e.revenue}</td>
-                <td>{e.points}</td>
-                <td>{e.target}</td>
-                <td>
-  {(() => {
-    const percent = Number(e.percentage || 0)
+            {data.map(e => {
+              const percent = Number(e.percent || 0)
 
-    let color = '#ef4444' // red
+              let color = '#ef4444'
+              if (percent >= 200) color = '#22c55e'
+              else if (percent >= 150) color = '#f97316'
+              else if (percent >= 100) color = '#eab308'
 
-    if (percent > 75) color = '#22c55e'      // green
-    else if (percent > 50) color = '#eab308' // yellow
-    else if (percent > 35) color = '#f97316' // orange
+              const safePercent = percent === 0 ? 5 : Math.min(percent, 100)
 
-    return (
-      <div style={{
-        width: '120px',
-        background: '#1f2937',
-        borderRadius: '6px',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          width: `${percent}%`,
-          background: color,
-          padding: '4px 0',
-          textAlign: 'center',
-          fontSize: '12px',
-          color: 'white'
-        }}>
-          {percent}%
-        </div>
-      </div>
-    )
-  })()}
-</td>
-              </tr>
-            ))}
+              return (
+                <tr key={e.id}>
+                  <td>{e.name || '-'}</td>
+                  <td>{e.team || '-'}</td>
+                  <td>{e.admissions}</td>
+                  <td>₹{fmt ? fmt(e.revenue) : e.revenue}</td>
+                  <td>{e.points}</td>
+                  <td>{e.target}</td>
+
+                  <td>
+                    <div style={{
+                      width: '120px',
+                      background: '#1f2937',
+                      borderRadius: '6px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        width: safePercent + '%',
+                        background: color,
+                        padding: '4px 0',
+                        textAlign: 'center',
+                        fontSize: '12px',
+                        color: 'white'
+                      }}>
+                        {Math.round(percent)}%
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
+
         </table>
       </div>
-
     </div>
   )
 }

@@ -54,14 +54,15 @@ export default function Payroll() {
 
           <tbody>
             {payroll.map(p => {
-              const emp = employees.find(e => e.id === p.employee_id)
+              const emp = employees.find(e => Number(e.id) === Number(p.employee_id))
 
               return (
                 <tr key={p.id}>
                   <td>{emp?.name || '-'}</td>
-                  <td>{p.date}</td>
-                  <td>₹{fmt(p.salary_paid)}</td>
-                  <td>₹{fmt(p.incentive)}</td>
+                  <td>{p.date ? new
+                  Date(p.date).toLocaleDateString() : '-'}</td>
+                  <td>₹{fmt(p.salary_paid || 0)}</td>
+                  <td>₹{fmt(p.incentive || 0)}</td>
                   <td>₹{fmt((p.salary_paid || 0) + (p.incentive || 0))}</td>
                   <td>
                     <span
